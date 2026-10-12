@@ -242,6 +242,8 @@ pub struct Settings {
     pub gapless: bool,
     /// Volume percent label next to the volume slider in the player bar.
     pub volume_percent: VolumePercent,
+    /// Side restored when the label is switched back on.
+    pub volume_percent_side: VolumePercent,
     /// librespot backend name; `None` picks the platform default.
     pub audio_backend: Option<String>,
     pub audio_device: Option<String>,
@@ -434,6 +436,7 @@ impl Default for Settings {
             autoplay: true,
             gapless: true,
             volume_percent: VolumePercent::Off,
+            volume_percent_side: VolumePercent::Right,
             audio_backend: None,
             audio_device: None,
             audio_buffer_ms: default_buffer_ms(),
@@ -938,8 +941,14 @@ mod tests {
     fn volume_percent_label_is_opt_in_and_old_files_stay_off() {
         use super::VolumePercent;
         assert_eq!(Settings::default().volume_percent, VolumePercent::Off);
+        assert_eq!(
+            Settings::default().volume_percent_side,
+            VolumePercent::Right,
+            "first switch-on restores the requested right side"
+        );
         let older: Settings = serde_json::from_value(serde_json::json!({"volume": 37})).unwrap();
         assert_eq!(older.volume_percent, VolumePercent::Off);
+        assert_eq!(older.volume_percent_side, VolumePercent::Right);
         for choice in [VolumePercent::Left, VolumePercent::Right] {
             let settings: Settings =
                 serde_json::from_value(serde_json::json!({"volume_percent": choice})).unwrap();

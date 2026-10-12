@@ -3205,10 +3205,10 @@ msgstr ""
 msgid "Which side of the volume slider shows the percent."
 msgstr ""
 
-#: src/ui/settings.rs:1149
+#: src/ui/settings.rs:1152
 msgid "Left"
 msgstr ""
 
-#: src/ui/settings.rs:1150
+#: src/ui/settings.rs:1153
 msgid "Right"
 msgstr ""

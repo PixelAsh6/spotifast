@@ -1124,13 +1124,16 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                 |ui| {
                     let mut on = app.settings.volume_percent != VolumePercent::Off;
                     if widgets::switch(ui, &palette, &show_volume_percent, &mut on).changed() {
-                        // Switching on picks the right side; the row below
-                        // offers the left one.
-                        app.settings.volume_percent = if on {
-                            VolumePercent::Right
+                        // Switching on restores the last used side; the row
+                        // below offers the other one.
+                        if on {
+                            app.settings.volume_percent = app.settings.volume_percent_side;
                         } else {
-                            VolumePercent::Off
-                        };
+                            if app.settings.volume_percent != VolumePercent::Off {
+                                app.settings.volume_percent_side = app.settings.volume_percent;
+                            }
+                            app.settings.volume_percent = VolumePercent::Off;
+                        }
                         changed = true;
                     }
                 },
@@ -1162,6 +1165,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                                 .clicked()
                                 {
                                     app.settings.volume_percent = *side;
+                                    app.settings.volume_percent_side = *side;
                                     changed = true;
                                 }
                             }
