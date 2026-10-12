@@ -6,6 +6,7 @@ use crate::app::{App, NowPlaying};
 use crate::i18n::gettext;
 use crate::model::{Action, DragTrack, Page};
 use crate::player::RepeatMode;
+use crate::settings::VolumePercent;
 use crate::theme::{self, Icon};
 use crate::util;
 
@@ -801,6 +802,19 @@ fn transport(app: &mut App, ui: &mut egui::Ui, now: Option<&NowPlaying>, region:
     );
 }
 
+/// The volume percent next to the volume slider. Painted, not a widget,
+/// so the accessibility tree the demo tests assert on is unchanged.
+fn volume_percent_label(ui: &mut egui::Ui, palette: &theme::Palette, shown: u8) {
+    let (rect, _) = ui.allocate_exact_size(vec2(36.0, 18.0), Sense::hover());
+    ui.painter().text(
+        rect.center(),
+        egui::Align2::CENTER_CENTER,
+        format!("{}%", shown),
+        theme::regular(11.5),
+        palette.secondary,
+    );
+}
+
 fn extras(app: &mut App, ui: &mut egui::Ui, now: Option<&NowPlaying>) {
     let palette = app.palette;
     ui.spacing_mut().item_spacing.x = 6.0;
@@ -815,6 +829,11 @@ fn extras(app: &mut App, ui: &mut egui::Ui, now: Option<&NowPlaying>) {
     // volume changes from other apps: show their volume but don't offer to
     // change it.
     let adjustable = now.is_none_or(|now| now.can_set_volume);
+    // The row lays out right to left, so this paints furthest right: the
+    // requested right side of the volume bar.
+    if app.settings.volume_percent == VolumePercent::Right {
+        volume_percent_label(ui, &palette, shown);
+    }
     let controls = ui.add_enabled_ui(adjustable, |ui| {
         match thin_slider(
             ui,
@@ -839,6 +858,9 @@ fn extras(app: &mut App, ui: &mut egui::Ui, now: Option<&NowPlaying>) {
                     .push(Action::SetVolume((value * 100.0).round() as u8));
             }
             SliderEvent::None => {}
+        }
+        if app.settings.volume_percent == VolumePercent::Left {
+            volume_percent_label(ui, &palette, shown);
         }
         let volume_icon = match shown {
             0 => Icon::VolumeX,

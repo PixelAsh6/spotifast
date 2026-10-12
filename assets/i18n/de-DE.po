@@ -3215,3 +3215,26 @@ msgstr "Klick auf die Wiedergabeleiste ändert die Visualisierung"
 #: src/ui/settings.rs
 msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Klicks auf freie Bereiche der Wiedergabeleiste wechseln die Visualisierung."
+#: src/ui/settings.rs:452
+msgid "Show volume percentage"
+msgstr ""
+
+#: src/ui/settings.rs:905
+msgid "Show the volume percent next to the volume slider."
+msgstr ""
+
+#: src/ui/settings.rs:453
+msgid "Volume percentage position"
+msgstr ""
+
+#: src/ui/settings.rs:912
+msgid "Which side of the volume slider shows the percent."
+msgstr ""
+
+#: src/ui/settings.rs:1149
+msgid "Left"
+msgstr ""
+
+#: src/ui/settings.rs:1150
+msgid "Right"
+msgstr ""

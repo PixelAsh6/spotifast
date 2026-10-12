@@ -196,7 +196,8 @@ dialogs and open menus keep Delete from acting on the list.
 
 Press and hold the player bar's volume slider to update local volume without
 moving the pointer. Remote volume is sent on release. The seek slider previews
-on press and seeks on release.
+on press and seeks on release. An Appearance switch shows the volume percent
+beside the slider, on either side.
 
 The default local output smooths volume and mute changes over 30 ms. Explicit
 track changes and play/pause/stop use nominal 50 ms fades. Stopping can shorten

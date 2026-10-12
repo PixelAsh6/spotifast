@@ -6,7 +6,7 @@ use crate::api::models::pick_image;
 use crate::app::App;
 use crate::i18n::{gettext, ngettext, pgettext};
 use crate::model::{Action, Dialog};
-use crate::settings::{LanguageChoice, ProxyMode, ThemeChoice};
+use crate::settings::{LanguageChoice, ProxyMode, ThemeChoice, VolumePercent};
 use crate::theme::{self, Icon, Palette};
 
 use super::widgets;
@@ -449,6 +449,8 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let normalize_volume = gettext(locale, "Normalize volume");
     let autoplay = gettext(locale, "Autoplay");
     let gapless = gettext(locale, "Gapless playback");
+    let show_volume_percent = gettext(locale, "Show volume percentage");
+    let volume_position = gettext(locale, "Volume percentage position");
     let keep_playing = gettext(locale, "Keep music playing when the window closes");
     let update_checks = gettext(locale, "Automatic update checks");
     let audio_cache = gettext(locale, "Audio cache");
@@ -896,6 +898,20 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
             player_bar_vis_click.clone(),
             gettext(locale, "Allow clicks on empty player bar space to cycle the visualizer."),
         ),
+        RowText::new(
+            show_volume_percent.clone(),
+            gettext(
+                locale,
+                "Show the volume percent next to the volume slider.",
+            ),
+        ),
+        RowText::new(
+            volume_position.clone(),
+            gettext(
+                locale,
+                "Which side of the volume slider shows the percent.",
+            ),
+        ),
     ];
     if section_matches(&needle, &appearance, &appearance_rows) {
         any_visible = true;
@@ -1099,6 +1115,60 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                     }
                 },
             );
+            filtered_row(
+                ui,
+                &palette,
+                &needle,
+                &appearance,
+                &appearance_rows[10],
+                |ui| {
+                    let mut on = app.settings.volume_percent != VolumePercent::Off;
+                    if widgets::switch(ui, &palette, &show_volume_percent, &mut on).changed() {
+                        // Switching on picks the right side; the row below
+                        // offers the left one.
+                        app.settings.volume_percent = if on {
+                            VolumePercent::Right
+                        } else {
+                            VolumePercent::Off
+                        };
+                        changed = true;
+                    }
+                },
+            );
+            if app.settings.volume_percent != VolumePercent::Off {
+                filtered_row(
+                    ui,
+                    &palette,
+                    &needle,
+                    &appearance,
+                    &appearance_rows[11],
+                    |ui| {
+                        ui.horizontal(|ui| {
+                            // Laid right to left, so the last choice goes first.
+                            for (side, label) in [
+                                (VolumePercent::Left, gettext(locale, "Left")),
+                                (VolumePercent::Right, gettext(locale, "Right")),
+                            ]
+                            .iter()
+                            .rev()
+                            {
+                                if theme::soft_button(
+                                    ui,
+                                    &palette,
+                                    None,
+                                    label,
+                                    app.settings.volume_percent == *side,
+                                )
+                                .clicked()
+                                {
+                                    app.settings.volume_percent = *side;
+                                    changed = true;
+                                }
+                            }
+                        });
+                    },
+                );
+            }
             filtered_row(
                 ui,
                 &palette,

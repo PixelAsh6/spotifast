@@ -89,6 +89,16 @@ impl PlayerBarVis {
     }
 }
 
+/// Volume percent label beside the volume slider in the player bar.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum VolumePercent {
+    #[default]
+    Off,
+    Left,
+    Right,
+}
+
 /// Mini-player visualizer mode.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -230,6 +240,8 @@ pub struct Settings {
     pub normalisation: bool,
     pub autoplay: bool,
     pub gapless: bool,
+    /// Volume percent label next to the volume slider in the player bar.
+    pub volume_percent: VolumePercent,
     /// librespot backend name; `None` picks the platform default.
     pub audio_backend: Option<String>,
     pub audio_device: Option<String>,
@@ -421,6 +433,7 @@ impl Default for Settings {
             normalisation: false,
             autoplay: true,
             gapless: true,
+            volume_percent: VolumePercent::Off,
             audio_backend: None,
             audio_device: None,
             audio_buffer_ms: default_buffer_ms(),
@@ -919,6 +932,22 @@ mod tests {
         assert!(settings.system_theme_cache.is_none());
         assert_eq!(settings.theme, ThemeChoice::Dark);
         assert_eq!(settings.volume, 37);
+    }
+
+    #[test]
+    fn volume_percent_label_is_opt_in_and_old_files_stay_off() {
+        use super::VolumePercent;
+        assert_eq!(Settings::default().volume_percent, VolumePercent::Off);
+        let older: Settings = serde_json::from_value(serde_json::json!({"volume": 37})).unwrap();
+        assert_eq!(older.volume_percent, VolumePercent::Off);
+        for choice in [VolumePercent::Left, VolumePercent::Right] {
+            let settings: Settings =
+                serde_json::from_value(serde_json::json!({"volume_percent": choice})).unwrap();
+            assert_eq!(settings.volume_percent, choice);
+            let text = serde_json::to_string(&settings).unwrap();
+            let saved: Settings = serde_json::from_str(&text).unwrap();
+            assert_eq!(saved.volume_percent, choice);
+        }
     }
 
     #[test]
