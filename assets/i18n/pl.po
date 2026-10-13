@@ -3365,12 +3365,12 @@ msgstr ""
 
 #: src/ui/settings.rs:817
 msgid "Fullscreen key"
-msgstr ""
+msgstr "Klawisz pełnoekranowy"
 
 #: src/ui/settings.rs:903
 msgid "Let the F key enter and leave lyrics full screen, except while typing."
-msgstr ""
+msgstr "Klawisz F służy do przełączania między trybem pełnoekranowym a normalnym podczas wyświetlania tekstów piosenek, z wyjątkiem sytuacji, gdy wpisujesz tekst."
 
 #: src/ui/keys.rs:226
 msgid "Lyrics full screen on or off, when enabled in Settings"
-msgstr ""
+msgstr "Włączanie lub wyłączanie wyświetlania tekstów piosenek na pełnym ekranie, jeśli opcja ta jest włączona w Ustawieniach"

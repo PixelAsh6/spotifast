@@ -3236,12 +3236,12 @@ msgstr ""
 
 #: src/ui/settings.rs:817
 msgid "Fullscreen key"
-msgstr ""
+msgstr "全螢幕鍵"
 
 #: src/ui/settings.rs:903
 msgid "Let the F key enter and leave lyrics full screen, except while typing."
-msgstr ""
+msgstr "讓 F 鍵在輸入文字時除外，其餘時間皆可切換至全螢幕顯示歌詞。"
 
 #: src/ui/keys.rs:226
 msgid "Lyrics full screen on or off, when enabled in Settings"
-msgstr ""
+msgstr "在「設定」中啟用後，歌詞全螢幕顯示的開啟或關閉狀態"

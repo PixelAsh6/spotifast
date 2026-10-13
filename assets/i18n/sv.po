@@ -3321,12 +3321,12 @@ msgstr ""
 
 #: src/ui/settings.rs:817
 msgid "Fullscreen key"
-msgstr ""
+msgstr "Helt skärm-tangenten"
 
 #: src/ui/settings.rs:903
 msgid "Let the F key enter and leave lyrics full screen, except while typing."
-msgstr ""
+msgstr "Använd F-tangenten för att växla mellan helskärmsläge och normal vy för texten, förutom när du skriver."
 
 #: src/ui/keys.rs:226
 msgid "Lyrics full screen on or off, when enabled in Settings"
-msgstr ""
+msgstr "Visa eller dölja låttexter i helskärmsläge, när funktionen är aktiverad i Inställningar"

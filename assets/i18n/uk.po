@@ -3356,12 +3356,12 @@ msgstr ""
 
 #: src/ui/settings.rs:817
 msgid "Fullscreen key"
-msgstr ""
+msgstr "Клавіша повного екрану"
 
 #: src/ui/settings.rs:903
 msgid "Let the F key enter and leave lyrics full screen, except while typing."
-msgstr ""
+msgstr "Нехай клавіша F перемикає між повноекранним режимом перегляду текстів пісень та звичайним режимом, за винятком моментів введення тексту."
 
 #: src/ui/keys.rs:226
 msgid "Lyrics full screen on or off, when enabled in Settings"
-msgstr ""
+msgstr "Увімкнути або вимкнути відображення тексту пісні на весь екран, якщо ця функція увімкнена в налаштуваннях"

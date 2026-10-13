@@ -3343,12 +3343,12 @@ msgstr ""
 
 #: src/ui/settings.rs:817
 msgid "Fullscreen key"
-msgstr ""
+msgstr "Tecla de ecrã inteiro"
 
 #: src/ui/settings.rs:903
 msgid "Let the F key enter and leave lyrics full screen, except while typing."
-msgstr ""
+msgstr "A tecla F permite entrar e sair do modo de ecrã inteiro das letras das canções, exceto enquanto se escreve."
 
 #: src/ui/keys.rs:226
 msgid "Lyrics full screen on or off, when enabled in Settings"
-msgstr ""
+msgstr "Ativar ou desativar a exibição das letras em ecrã inteiro, quando esta opção estiver ativada nas Definições"

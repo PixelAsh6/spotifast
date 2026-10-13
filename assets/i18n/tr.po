@@ -3330,12 +3330,12 @@ msgstr ""
 
 #: src/ui/settings.rs:817
 msgid "Fullscreen key"
-msgstr ""
+msgstr "Tam ekran tuşu"
 
 #: src/ui/settings.rs:903
 msgid "Let the F key enter and leave lyrics full screen, except while typing."
-msgstr ""
+msgstr "F tuşuyla, yazma işlemi dışında şarkı sözlerini tam ekran moduna geçirin ve bu moddan çıkın."
 
 #: src/ui/keys.rs:226
 msgid "Lyrics full screen on or off, when enabled in Settings"
-msgstr ""
+msgstr "Ayarlar'da etkinleştirildiğinde şarkı sözlerinin tam ekran gösterimi açma veya kapatma"
