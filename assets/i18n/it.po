@@ -3209,24 +3209,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Consenti ai clic sullo spazio vuoto della barra di riproduzione di cambiare visualizzatore."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Mostra percentuale del volume"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Mostra la percentuale del volume accanto al cursore del volume."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Posizione della percentuale del volume"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "Da quale lato del cursore del volume viene visualizzata la percentuale."
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "A sinistra"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "A destra"

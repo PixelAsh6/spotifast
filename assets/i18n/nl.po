@@ -3201,24 +3201,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Sta toe dat klikken op lege ruimte in de afspeelbalk de visualisatie wisselt."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Volumeprocent weergeven"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Geef het volumeprocent weer naast de volumeschuifbalk."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Positie van het volumeprocent"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "Aan welke kant van de volumeschuifbalk wordt het procent weergegeven?"
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "Rechts"

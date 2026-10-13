@@ -3221,24 +3221,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Zezwalaj na przełączanie wizualizacji kliknięciem pustego miejsca na pasku odtwarzania."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Pokaż procent głośności"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Wyświetlaj procent głośności obok suwaka głośności."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Pozycja procentu głośności"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "Po której stronie suwaka głośności ma być wyświetlany procent."
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "Po lewej"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "Po prawej"

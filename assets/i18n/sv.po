@@ -3183,24 +3183,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Tillåt klick på tomma ytor i uppspelningsfältet för att växla visualisering."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Visa volymprocent"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Visa volymprocenten bredvid volymreglaget."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Placering av volymprocent"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "På vilken sida av volymreglaget ska procenttalet visas?"
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "Vänster"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "Höger"

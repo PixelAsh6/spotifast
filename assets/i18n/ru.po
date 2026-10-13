@@ -3218,24 +3218,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Разрешить переключение визуализации нажатием на пустое место панели воспроизведения."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Показывать процент громкости"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Показывать процент громкости рядом с ползунком громкости."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Расположение процента громкости"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "С какой стороны ползунка громкости отображается процент."
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "Слева"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "Справа"

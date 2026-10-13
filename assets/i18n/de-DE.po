@@ -3217,24 +3217,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Klicks auf freie Bereiche der Wiedergabeleiste wechseln die Visualisierung."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Lautstärke in Prozent anzeigen"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Zeigt den Lautstärkeprozentsatz neben dem Lautstärkeregler an."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Position des Lautstärkeprozentsatzes"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "Auf welcher Seite des Lautstärkereglers wird der Prozentsatz angezeigt?"
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "Links"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "Rechts"

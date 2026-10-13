@@ -3211,24 +3211,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "Oynatma çubuğundaki boş alana tıklayarak görselleştiriciyi değiştirmeye izin ver."
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "Ses seviyesini yüzde olarak göster"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "Ses kaydırıcısının yanında ses seviyesini yüzde olarak göster."
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "Ses seviyesini yüzde olarak gösterme konumu"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "Ses kaydırıcısının hangi tarafında yüzde gösterilecek."
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "Sol"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "Sağ"

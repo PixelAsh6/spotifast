@@ -3103,24 +3103,24 @@ msgid "Allow clicks on empty player bar space to cycle the visualizer."
 msgstr "允許點擊播放列的空白區域來切換視覺化效果。"
 #: src/ui/settings.rs:452
 msgid "Show volume percentage"
-msgstr ""
+msgstr "顯示音量百分比"
 
 #: src/ui/settings.rs:905
 msgid "Show the volume percent next to the volume slider."
-msgstr ""
+msgstr "在音量滑桿旁顯示音量百分比。"
 
 #: src/ui/settings.rs:453
 msgid "Volume percentage position"
-msgstr ""
+msgstr "音量百分比位置"
 
 #: src/ui/settings.rs:912
 msgid "Which side of the volume slider shows the percent."
-msgstr ""
+msgstr "音量滑桿的哪一側顯示百分比。"
 
 #: src/ui/settings.rs:1152
 msgid "Left"
-msgstr ""
+msgstr "左側"
 
 #: src/ui/settings.rs:1153
 msgid "Right"
-msgstr ""
+msgstr "右側"
