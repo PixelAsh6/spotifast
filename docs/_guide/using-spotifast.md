@@ -239,6 +239,7 @@ Winamp skins do not yet have equivalent accessibility coverage.
 | `B` | Like or unlike the playing song |
 | `S` / `R` | Shuffle / cycle repeat |
 | `Q` | Queue panel |
+| `F` | Lyrics full screen on or off, when the Fullscreen key setting is on |
 | `Ctrl+F` or `/` | Search |
 | `Ctrl+B` | Show or hide the sidebar |
 | `Alt+←` / `Alt+→` | Back or forward |

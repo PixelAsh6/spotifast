@@ -3356,3 +3356,15 @@ msgstr ""
 
 #~ msgid "Reduce lyrics motion"
 #~ msgstr "Уменьшить анимацию текста"
+
+#: src/ui/settings.rs:817
+msgid "Fullscreen key"
+msgstr ""
+
+#: src/ui/settings.rs:903
+msgid "Let the F key enter and leave lyrics full screen, except while typing."
+msgstr ""
+
+#: src/ui/keys.rs:226
+msgid "Lyrics full screen on or off, when enabled in Settings"
+msgstr ""

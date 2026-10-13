@@ -814,6 +814,7 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
     let show_custom_titlebar = cfg!(target_os = "linux") || app.windows_controls_visible();
     let player_bar_vis = gettext(locale, "Player bar visualizer");
     let player_bar_vis_click = gettext(locale, "Click player bar to change visualizer");
+    let fullscreen_key = gettext(locale, "Fullscreen key");
     let appearance_rows = [
         RowText::new(theme_title.clone(), {
             let detail = theme::catalog_detail(
@@ -894,6 +895,13 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
         RowText::new(
             player_bar_vis_click.clone(),
             gettext(locale, "Allow clicks on empty player bar space to cycle the visualizer."),
+        ),
+        RowText::new(
+            fullscreen_key.clone(),
+            gettext(
+                locale,
+                "Let the F key enter and leave lyrics full screen, except while typing.",
+            ),
         ),
     ];
     if section_matches(&needle, &appearance, &appearance_rows) {
@@ -1091,6 +1099,25 @@ pub fn show(app: &mut App, ui: &mut egui::Ui) {
                         &palette,
                         &player_bar_vis_click,
                         &mut app.settings.player_bar_vis_click,
+                    )
+                    .changed()
+                    {
+                        changed = true;
+                    }
+                },
+            );
+            filtered_row(
+                ui,
+                &palette,
+                &needle,
+                &appearance,
+                &appearance_rows[10],
+                |ui| {
+                    if widgets::switch(
+                        ui,
+                        &palette,
+                        &fullscreen_key,
+                        &mut app.settings.fullscreen_key,
                     )
                     .changed()
                     {

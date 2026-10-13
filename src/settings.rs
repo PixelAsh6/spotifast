@@ -230,6 +230,8 @@ pub struct Settings {
     pub normalisation: bool,
     pub autoplay: bool,
     pub gapless: bool,
+    /// The F key toggles lyrics full screen, like the lyrics panel button.
+    pub fullscreen_key: bool,
     /// librespot backend name; `None` picks the platform default.
     pub audio_backend: Option<String>,
     pub audio_device: Option<String>,
@@ -425,6 +427,7 @@ impl Default for Settings {
             normalisation: false,
             autoplay: true,
             gapless: true,
+            fullscreen_key: false,
             audio_backend: None,
             audio_device: None,
             audio_buffer_ms: default_buffer_ms(),
