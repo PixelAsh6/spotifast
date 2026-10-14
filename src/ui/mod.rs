@@ -173,10 +173,15 @@ pub(crate) fn yielding_panel(
     }
 }
 
+/// Whether the person is dragging this panel's resize handle right now.
+pub(crate) fn panel_dragged(ctx: &Context, id: &str) -> bool {
+    ctx.is_being_dragged(Id::new(id).with("__resize"))
+}
+
 /// Whether a panel's new width is one the person chose: it moved while not
 /// held back by the page, or by their own drag.
 pub(crate) fn panel_width_chosen(ctx: &Context, id: &str, fit: &PanelFit) -> bool {
-    !fit.yielding || ctx.is_being_dragged(Id::new(id).with("__resize"))
+    !fit.yielding || panel_dragged(ctx, id)
 }
 
 /// Keeps the most recent loading preview of each metadata type available to

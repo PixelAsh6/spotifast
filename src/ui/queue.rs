@@ -134,8 +134,12 @@ pub fn side_panel(app: &mut App, ui: &mut egui::Ui) {
         );
     });
     let width = response.response.rect.width();
+    // Adopt the drawn width only from the person's own drag. The panel
+    // also draws clamped copies of widths chosen elsewhere (the
+    // fullscreen column shares this setting below the panel minimum),
+    // and those must never overwrite the remembered width.
     if (width - app.settings.queue_width).abs() > 1.0
-        && super::panel_width_chosen(ui.ctx(), "queue-panel", &fit)
+        && super::panel_dragged(ui.ctx(), "queue-panel")
     {
         app.settings.queue_width = width;
         app.actions.push(Action::SettingsChanged);

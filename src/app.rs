@@ -13178,6 +13178,19 @@ mod tests {
             (stored_width(&ctx) - 300.0).abs() < 1.0,
             "the returning panel draws at the narrowed width"
         );
+        // Below the side panel minimum the panel still draws at its own
+        // minimum, but the remembered width stays at the column floor, so
+        // reopening fullscreen shows the narrowed column again.
+        app.settings.queue_width = crate::ui::queue::FULLSCREEN_COLUMN_MIN;
+        panel(&mut app, &ctx);
+        assert!(
+            (app.settings.queue_width - crate::ui::queue::FULLSCREEN_COLUMN_MIN).abs() < 1.0,
+            "the returning panel keeps the floor width"
+        );
+        assert!(
+            (stored_width(&ctx) - crate::theme::SIDE_PANEL_MIN_WIDTH).abs() < 1.0,
+            "the panel draws at its own minimum"
+        );
         app.backend.shutdown();
     }
 
