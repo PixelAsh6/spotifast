@@ -13131,6 +13131,56 @@ mod tests {
         assert!(!app.show_queue_panel);
     }
 
+    /// Narrowing the fullscreen queue column survives leaving fullscreen:
+    /// the returning side panel draws around the narrowed width instead
+    /// of writing its remembered width back over the setting.
+    #[test]
+    fn leaving_fullscreen_keeps_the_narrowed_queue_width() {
+        let mut app = headless_app();
+        let ctx = egui::Context::default();
+        crate::theme::install(&ctx);
+        let panel = |app: &mut App, ctx: &egui::Context| {
+            let mut output = ctx.run_ui(
+                egui::RawInput {
+                    screen_rect: Some(egui::Rect::from_min_size(
+                        egui::Pos2::ZERO,
+                        egui::vec2(1600.0, 900.0),
+                    )),
+                    ..Default::default()
+                },
+                |ui| crate::ui::queue::side_panel(app, ui),
+            );
+            output.textures_delta.clear();
+        };
+        let stored_width = |ctx: &egui::Context| {
+            egui::containers::panel::PanelState::load(ctx, egui::Id::new("queue-panel"))
+                .map(|state| state.outer_rect.width())
+                .unwrap_or(0.0)
+        };
+        panel(&mut app, &ctx);
+        assert!(
+            (app.settings.queue_width - 360.0).abs() < 1.0,
+            "the panel opens at the default width"
+        );
+        assert!(
+            (stored_width(&ctx) - 360.0).abs() < 1.0,
+            "the panel draws at the default width"
+        );
+        // A fullscreen drag narrows the shared width while the side panel
+        // is hidden, so egui still remembers the old width here.
+        app.settings.queue_width = 300.0;
+        panel(&mut app, &ctx);
+        assert!(
+            (app.settings.queue_width - 300.0).abs() < 1.0,
+            "the returning panel keeps the narrowed width"
+        );
+        assert!(
+            (stored_width(&ctx) - 300.0).abs() < 1.0,
+            "the returning panel draws at the narrowed width"
+        );
+        app.backend.shutdown();
+    }
+
     #[test]
     fn saving_playlist_details_sends_only_what_changed() {
         let mut app = headless_app();
