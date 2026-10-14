@@ -151,6 +151,15 @@ pub fn side_panel(app: &mut App, ui: &mut egui::Ui) {
 pub(crate) const FULLSCREEN_COLUMN_MIN: f32 = 240.0;
 pub(crate) const FULLSCREEN_COLUMN_MAX: f32 = 380.0;
 
+/// The column width a drag gesture works from: the drawn width, not the
+/// saved one. The saved side-panel width can sit outside this column's
+/// range, and starting there would swallow the first movement back
+/// inside it.
+pub(crate) fn fullscreen_column_drag_width(saved: f32, delta_x: f32) -> f32 {
+    let drawn = saved.clamp(FULLSCREEN_COLUMN_MIN, FULLSCREEN_COLUMN_MAX);
+    (drawn - delta_x).clamp(FULLSCREEN_COLUMN_MIN, FULLSCREEN_COLUMN_MAX)
+}
+
 /// The queue as the right column of lyrics fullscreen: the same rows as
 /// the side panel, without the resizable panel chrome. The caller provides
 /// the rect; everything here draws inside it.
@@ -197,8 +206,7 @@ pub fn fullscreen_column(app: &mut App, ui: &mut egui::Ui) {
         );
     }
     if grip.dragged() {
-        let width = (app.settings.queue_width - grip.drag_delta().x)
-            .clamp(FULLSCREEN_COLUMN_MIN, FULLSCREEN_COLUMN_MAX);
+        let width = fullscreen_column_drag_width(app.settings.queue_width, grip.drag_delta().x);
         if (width - app.settings.queue_width).abs() > 0.5 {
             app.settings.queue_width = width;
             app.actions.push(Action::SettingsChanged);

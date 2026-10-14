@@ -3209,7 +3209,9 @@ impl App {
         {
             self.refresh_queue(true);
         }
-        if self.show_lyrics_panel {
+        if self.show_lyrics_panel || self.lyrics_fullscreen.is_some() {
+            // Fullscreen shows lyrics without the panel flag when the
+            // queue column is open; a track change must refresh them.
             self.request_lyrics();
         }
     }
@@ -13192,6 +13194,58 @@ mod tests {
             "the panel draws at its own minimum"
         );
         app.backend.shutdown();
+    }
+
+    /// A track change requests fresh lyrics while fullscreen shows the
+    /// queue column: the lyrics panel flag stays off there, so gating on
+    /// it alone would leave the previous track's words up.
+    #[test]
+    fn track_change_requests_lyrics_with_fullscreen_queue_open() {
+        let mut app = headless_app();
+        let ctx = egui::Context::default();
+        app.local.track = Some(crate::player::LocalTrack {
+            uri: "spotify:track:a".into(),
+            ..Default::default()
+        });
+        app.local.playback = Playback::Playing;
+        app.on_now_playing_changed();
+        app.show_queue_panel = true;
+        app.apply(Action::SetLyricsFullscreen(true), &ctx);
+        assert!(
+            !app.show_lyrics_panel,
+            "the queue column leaves the lyrics panel off"
+        );
+        app.local.track = Some(crate::player::LocalTrack {
+            uri: "spotify:track:b".into(),
+            ..Default::default()
+        });
+        app.on_now_playing_changed();
+        assert_eq!(
+            app.lyrics_uri.as_deref(),
+            Some("spotify:track:b"),
+            "fullscreen requests the new track's lyrics"
+        );
+        app.backend.shutdown();
+    }
+
+    /// The fullscreen drag starts from the drawn column width: with 500
+    /// saved, the column draws 380, and a 10-point inward drag narrows
+    /// it at once instead of being swallowed by the clamp.
+    #[test]
+    fn fullscreen_column_drag_starts_from_the_drawn_width() {
+        use crate::ui::queue::{
+            FULLSCREEN_COLUMN_MAX, FULLSCREEN_COLUMN_MIN, fullscreen_column_drag_width,
+        };
+        assert_eq!(fullscreen_column_drag_width(500.0, 10.0), 370.0);
+        assert_eq!(
+            fullscreen_column_drag_width(500.0, -10.0),
+            FULLSCREEN_COLUMN_MAX
+        );
+        assert_eq!(fullscreen_column_drag_width(300.0, 10.0), 290.0);
+        assert_eq!(
+            fullscreen_column_drag_width(FULLSCREEN_COLUMN_MIN, 10.0),
+            FULLSCREEN_COLUMN_MIN
+        );
     }
 
     #[test]
