@@ -5866,8 +5866,9 @@ impl App {
     /// Plays the chosen queue row on this computer's player, without a
     /// song in between. A row the user queued is not part of the playing
     /// context, so it goes to the head of the engine's queue and one skip
-    /// plays it. A row from the context is reached with one load, which
-    /// starts that song and nothing else.
+    /// plays it. A row from the context is reached by asking Spotify to
+    /// play the context at that song, which starts that song and nothing
+    /// else.
     fn jump_local_queue(&mut self, uri: &str, position: usize, manual_rows: usize) {
         if position < manual_rows {
             // A song the user queued is not in the playing context, and
@@ -5882,17 +5883,39 @@ impl App {
         } else if let Some(context) = self.playing_context_uri() {
             // The songs the user queued above the chosen one go with it.
             self.resync_local_queue();
-            self.backend.player(PlayerCommand::Load(LoadSpec {
-                context_uri: Some(context),
-                offset_uri: Some(uri.to_string()),
-                position_ms: 0,
-                play: true,
-                // A load resets the engine's options, so the user's own
-                // shuffle and repeat have to be named again.
-                shuffle: Some(self.shuffle_wanted),
-                repeat: Some(self.local_repeat()),
-                ..LoadSpec::default()
-            }));
+            if web_api_offsets(&context) {
+                // The jump goes through the Web API, the way Spotify's own
+                // clients reach a song inside a context: Spotify resolves
+                // the song in the context and tells this computer's player
+                // to start it there. A load of the context would leave the
+                // player to look the song up among the tracks it holds,
+                // and when it cannot find it, it starts the context's first
+                // song instead and builds the queue over from there.
+                self.backend.api(ApiRequest::Remote {
+                    action: RemoteAction::Play,
+                    device_id: self.local_device_id.clone(),
+                    play: Some(PlayRequest::context(context).starting_at_uri(uri)),
+                    position_ms: 0,
+                    percent: 0,
+                    flag: false,
+                    repeat: String::new(),
+                });
+            } else {
+                // A context the Web API cannot start at a chosen song, an
+                // artist or a radio, comes with its songs in one piece, so
+                // the player finds the song among the tracks it holds.
+                self.backend.player(PlayerCommand::Load(LoadSpec {
+                    context_uri: Some(context),
+                    offset_uri: Some(uri.to_string()),
+                    position_ms: 0,
+                    play: true,
+                    // A load resets the engine's options, so the user's own
+                    // shuffle and repeat have to be named again.
+                    shuffle: Some(self.shuffle_wanted),
+                    repeat: Some(self.local_repeat()),
+                    ..LoadSpec::default()
+                }));
+            }
             return;
         }
         // There is no context to jump inside, so skip down to the row.
@@ -12957,6 +12980,14 @@ fn engine_queues(uri: &str) -> bool {
         .any(|prefix| uri.starts_with(prefix))
 }
 
+/// Whether the Web API can start a context at a chosen song. Its offset
+/// works for an album or a playlist only. Another context, an artist or a
+/// radio, has no offset, and asking for one would start the context over
+/// from its first song.
+fn web_api_offsets(context: &str) -> bool {
+    matches!(util::uri_kind(context), Some("album" | "playlist"))
+}
+
 /// A `spotify:local:` URI as the player keys it, parsed and written back as
 /// librespot does; empty for any other URI.
 pub(crate) fn local_file_key(uri: &str) -> String {
@@ -16976,10 +17007,72 @@ mod tests {
     }
 
     /// A clicked Next up row jumps to that song on this computer: one
-    /// load names the playing context and the song, and no song in
+    /// request names the playing context and the song, and no song in
     /// between is played.
     #[test]
     fn a_clicked_next_up_row_loads_that_song_and_nothing_else() {
+        let ctx = egui::Context::default();
+        let mut app = headless_app();
+        app.local.track = Some(crate::player::LocalTrack {
+            uri: "spotify:track:a".into(),
+            ..Default::default()
+        });
+        app.local.playback = Playback::Playing;
+        app.local_device_id = Some("this-computer".into());
+        app.assumed_context = Some(AssumedContext {
+            uri: "spotify:playlist:ctx".into(),
+            shuffle: None,
+            at: Instant::now(),
+        });
+        app.queue = loaded_queue(
+            "spotify:track:a",
+            &["spotify:track:b", "spotify:track:c", "spotify:track:d"],
+        );
+        app.backend.take_player_commands();
+        app.apply(
+            Action::PlayFromRow {
+                context: RowContext::Queue,
+                uri: "spotify:track:c".into(),
+                index: 1,
+            },
+            &ctx,
+        );
+        assert_eq!(
+            app.backend.take_player_commands(),
+            vec![PlayerCommand::ClearQueue],
+            "the player's queue is cleared, and the context is not loaded over"
+        );
+        let requests = app.backend.take_remote_play_requests();
+        assert_eq!(requests.len(), 1, "one request, and no song in between");
+        let (device, play) = match &requests[0] {
+            ApiRequest::Remote {
+                action: RemoteAction::Play,
+                device_id,
+                play: Some(play),
+                ..
+            } => (device_id, play),
+            other => panic!("unexpected playback request: {other:?}"),
+        };
+        assert_eq!(
+            device.as_deref(),
+            Some("this-computer"),
+            "the request names this computer's player"
+        );
+        assert_eq!(play.context_uri.as_deref(), Some("spotify:playlist:ctx"));
+        assert_eq!(play.offset_uri.as_deref(), Some("spotify:track:c"));
+        let (current, next) = queue_uris(&app);
+        assert_eq!(current.as_deref(), Some("spotify:track:c"));
+        assert_eq!(next, vec!["spotify:track:d"], "the rows below stay");
+    }
+
+    /// A clicked row of the playing context is played through Spotify,
+    /// which resolves the song inside the context. The player is never
+    /// asked to load the context again: it would look the song up among
+    /// the tracks it holds, and when it cannot find it there, it starts
+    /// the context's first song instead and builds the queue over from
+    /// there.
+    #[test]
+    fn a_clicked_context_row_is_not_played_by_loading_the_context_again() {
         let ctx = egui::Context::default();
         let mut app = headless_app();
         app.local.track = Some(crate::player::LocalTrack {
@@ -17005,23 +17098,77 @@ mod tests {
             },
             &ctx,
         );
+        assert!(
+            !app.backend
+                .take_player_commands()
+                .iter()
+                .any(|command| matches!(command, PlayerCommand::Load(_))),
+            "the context is not loaded over, so the player cannot start it from its first song"
+        );
+        let requests = app.backend.take_remote_play_requests();
+        assert_eq!(requests.len(), 1);
+        let play = match &requests[0] {
+            ApiRequest::Remote {
+                action: RemoteAction::Play,
+                play: Some(play),
+                ..
+            } => play,
+            other => panic!("unexpected playback request: {other:?}"),
+        };
         assert_eq!(
-            app.backend.take_player_commands(),
-            vec![
-                PlayerCommand::ClearQueue,
-                PlayerCommand::Load(LoadSpec {
-                    context_uri: Some("spotify:playlist:ctx".into()),
-                    uris: Vec::new(),
-                    offset_uri: Some("spotify:track:c".into()),
-                    offset_index: None,
-                    position_ms: 0,
-                    play: true,
-                    shuffle: Some(false),
-                    repeat: Some(RepeatMode::Off),
-                    autoplay: false,
-                }),
-            ],
-            "the row is reached with one load, and no song in between is skipped to"
+            play.offset_uri.as_deref(),
+            Some("spotify:track:c"),
+            "the request names the chosen song"
+        );
+    }
+
+    /// A context the Web API cannot start at a chosen song, an artist or a
+    /// radio, still reaches its row at once: the player holds such a
+    /// context whole, so it finds the song among the tracks it has.
+    #[test]
+    fn a_clicked_next_up_row_of_a_radio_jumps_to_that_song() {
+        let ctx = egui::Context::default();
+        let mut app = headless_app();
+        app.local.track = Some(crate::player::LocalTrack {
+            uri: "spotify:track:a".into(),
+            ..Default::default()
+        });
+        app.local.playback = Playback::Playing;
+        app.assumed_context = Some(AssumedContext {
+            uri: "spotify:station:playlist:ctx".into(),
+            shuffle: None,
+            at: Instant::now(),
+        });
+        app.queue = loaded_queue(
+            "spotify:track:a",
+            &["spotify:track:b", "spotify:track:c", "spotify:track:d"],
+        );
+        app.backend.take_player_commands();
+        app.apply(
+            Action::PlayFromRow {
+                context: RowContext::Queue,
+                uri: "spotify:track:c".into(),
+                index: 1,
+            },
+            &ctx,
+        );
+        let commands = app.backend.take_player_commands();
+        let loads: Vec<&LoadSpec> = commands
+            .iter()
+            .filter_map(|command| match command {
+                PlayerCommand::Load(load) => Some(load),
+                _ => None,
+            })
+            .collect();
+        assert_eq!(loads.len(), 1, "the radio is loaded once");
+        assert_eq!(
+            loads[0].offset_uri.as_deref(),
+            Some("spotify:track:c"),
+            "the radio is loaded at the chosen song"
+        );
+        assert!(
+            app.backend.take_remote_play_requests().is_empty(),
+            "a radio is not a context the Web API can start at a song"
         );
         let (current, next) = queue_uris(&app);
         assert_eq!(current.as_deref(), Some("spotify:track:c"));
