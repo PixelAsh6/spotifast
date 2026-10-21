@@ -5787,6 +5787,12 @@ impl App {
             if uris.is_empty() {
                 return;
             }
+            // The click names a song; if the rows shifted under the
+            // pointer, the song wins over the row number.
+            let index = match uris.get(index) {
+                Some(held) if *held == uri => index,
+                _ => uris.iter().position(|held| *held == uri).unwrap_or(index),
+            };
             let (uris, index) = cap_uris(&uris, index as u32);
             self.play_request(PlayRequest::tracks(uris).starting_at_index(index), false);
             return;
@@ -17127,6 +17133,47 @@ mod tests {
         let (current, next) = queue_uris(&app);
         assert_eq!(current.as_deref(), Some("spotify:track:c"));
         assert!(next.is_empty());
+    }
+
+    /// The remembered queue is found by its song too: when nothing plays,
+    /// the rows shown are the ones from the last run, and they can shift
+    /// under the pointer before the click lands.
+    #[test]
+    fn a_clicked_resumed_queue_row_is_found_by_its_song() {
+        let ctx = egui::Context::default();
+        let mut app = headless_app();
+        app.local.connected = true;
+        app.resume_track = Some("spotify:track:a".into());
+        app.queue = loaded_queue("spotify:track:a", &["spotify:track:b", "spotify:track:c"]);
+        assert!(
+            app.resume_only(),
+            "nothing plays, so the queue is remembered"
+        );
+        app.backend.take_player_commands();
+        app.apply(
+            Action::PlayFromRow {
+                context: RowContext::Queue,
+                uri: "spotify:track:c".into(),
+                index: 0,
+            },
+            &ctx,
+        );
+        let commands = app.backend.take_player_commands();
+        assert_eq!(commands.len(), 1, "the remembered rows play as one list");
+        let PlayerCommand::Load(load) = &commands[0] else {
+            panic!("the remembered rows play as a list, not a skip");
+        };
+        assert_eq!(load.uris, ["spotify:track:b", "spotify:track:c"]);
+        assert_eq!(
+            load.offset_index,
+            Some(1),
+            "the clicked song starts, not the row under the pointer"
+        );
+        assert_eq!(
+            app.current_track_uri().as_deref(),
+            Some("spotify:track:c"),
+            "the clicked song is the one marked as playing"
+        );
     }
 
     /// Clear queue removes manual rows and preserves matching context rows.
