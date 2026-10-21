@@ -308,7 +308,7 @@ epaint_default_fonts = { git = "https://github.com/crmne/egui", rev = "6ce633ba5
 # other apps.
 # The revision below is the user's own patched build of the fork above, kept
 # for testing, and the fix is on its way upstream.
-winit = { git = "https://github.com/PixelAsh6/winit", rev = "b6b5e6e65e62a7b7a385bdabf4235d1b319c8536" }
+winit = { git = "https://github.com/PixelAsh6/winit", rev = "a7fc705b48f1a7cb49d416b0213dba9be98b961e" }
 # crmne/cpal: cpal 0.18.2 with stream names and roles for PipeWire and
 # PulseAudio (RustAudio/cpal#1409), which fastframe-audio 0.14 uses to name
 # Spotifast in volume mixers. rodio 0.21 gets cpal from crates.io; patching
