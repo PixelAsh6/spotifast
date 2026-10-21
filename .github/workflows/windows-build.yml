@@ -1,0 +1,87 @@
+name: Windows build
+
+# Builds the app on a GitHub runner and offers the executable as an
+# artifact, so the heavy part of the build (projectM through CMake for
+# MilkDrop) does not have to run on the developer's machine. The checks
+# themselves live in ci.yml, which runs on every push to main.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'native-packages.yaml'
+      - '.cargo/**'
+      - 'packaging/**'
+      - '.github/workflows/windows-build.yml'
+  workflow_dispatch:
+    inputs:
+      milkdrop:
+        description: Build with MilkDrop (slow, projectM is built with CMake)
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CMAKE_GENERATOR: Ninja
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Windows build (${{ matrix.name }})
+    runs-on: windows-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: with milkdrop
+            features: ''
+          - name: without milkdrop
+            features: '--no-default-features'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      # libprojectM reads OpenGL through GLEW on Windows; projectm-sys builds
+      # against vcpkg's static-CRT triplet, matching .cargo/config.toml.
+      - name: GLEW for libprojectM
+        if: matrix.features == ''
+        run: vcpkg install glew:x64-windows-static
+      # projectm-sys asks CMake for the Visual Studio generator, which the
+      # runner image no longer satisfies; Ninja inside the MSVC environment
+      # builds the same thing without caring which Visual Studio is on.
+      - name: MSVC environment for libprojectM
+        if: matrix.features == ''
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      # The same shared build store the checks use, so a build here and a
+      # check there share the compiled work.
+      - uses: jdx/mr-boxington-action@v1
+        with:
+          cache-generation: test-v1
+      - name: Build
+        shell: pwsh
+        run: mbx build --locked --release ${{ matrix.features }}
+      # The application is a single portable executable. The license and the
+      # readme travel with it, as the release's portable package has them.
+      - name: Collect the executable
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item target\release\spotifast.exe dist\
+          Copy-Item README.md, LICENSE dist\
+      - uses: actions/upload-artifact@v4
+        with:
+          name: spotifast-windows-x64-${{ matrix.name }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
