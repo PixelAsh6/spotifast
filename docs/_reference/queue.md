@@ -116,9 +116,10 @@ not consume a queue row or restore an older queue saved on this computer.
 
 5. **Playing a row from the queue jumps to it.** The rows above it are
    removed. The rows below it stay, and the playlist keeps going
-   afterwards. On the player running on this computer the app jumps
-   straight to the row, so no song in between is played. Another device
-   still steps down to the row, because the Web API cannot remove a
+   afterwards. On the player running on this computer the rows above are
+   taken out of the player's own queue, and one skip plays the row, so no
+   song in between is played and the queue keeps the order it had. Another
+   device still steps down to the row, because the Web API cannot remove a
    song from a live queue.
 
 6. **Starting a playlist or album keeps your songs.** The rows underneath
